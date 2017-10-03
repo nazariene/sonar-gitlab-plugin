@@ -1,0 +1,127 @@
+image: maven:3.3.9-jdk-8
+
+variables:
+  DOCKER_DRIVER: overlay2
+  MAVEN_OPTS: -Dmaven.repo.local=/cache/.repository
+
+stages:
+    - build
+    - test
+    - build-images
+    - integration
+    - qa
+
+build-package:
+    stage: build
+    script: "mvn -B clean package -DskipTests -Ddocker.skip"
+    artifacts:
+      paths:
+      - "target/sonar-gitlab-plugin-*.jar"
+
+quicktests:
+    stage: test
+    script: "mvn -B test --fail-at-end"
+    artifacts:
+      expire_in: 1 week
+      paths:
+      - "target/jacoco.exec"
+      - "target/surefire-reports/*.txt"
+      - "target/surefire-reports/*.xml"
+
+sonarqube:
+    stage: qa
+    script: "mvn -B compile test-compile sonar:sonar -Dsonar.host.url=https://sonarqube.johnnei.org -Dsonar.analysis.mode=issues -Dsonar.gitlab.analyse.commit=$CI_COMMIT_SHA -Dsonar.login=$INHOUSE_SONAR_TOKEN"
+    only: ["/^feature\\/.*$/"]
+    dependencies: ["quicktests"]
+
+sonarqube.johnnei.org:
+    stage: qa
+    script: "mvn -B compile test-compile sonar:sonar -Dsonar.host.url=https://sonarqube.johnnei.org -Dsonar.login=$INHOUSE_SONAR_TOKEN"
+    only: ["develop"]
+    dependencies: ["quicktests"]
+
+sonarqube.com:
+    stage: qa
+    script: "mvn -B compile test-compile sonar:sonar -Dsonar.host.url=https://sonarqube.com -Dsonar.login=$SONAR_TOKEN"
+    only: ["develop"]
+    dependencies: ["quicktests"]
+
+integration-image:
+    stage: build-images
+    tags: ["deploy"]
+    dependencies: []
+    variables:
+      IMAGE_NAME: "johnnei/sonar-gitlab-plugin:it-$CI_BUILD_REF"
+      MAVEN_OPTS: ""
+    script:
+      - "mvn process-test-resources"
+      - "docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY"
+      - "docker build -t $IMAGE_NAME target/test-classes/docker/integration"
+      - "docker tag $IMAGE_NAME $CI_REGISTRY/$IMAGE_NAME"
+      - "docker push $CI_REGISTRY/$IMAGE_NAME"
+
+.integration-test: &it_template
+    image: $CI_REGISTRY/johnnei/sonar-gitlab-plugin:it-$CI_BUILD_REF
+    stage: integration
+    services: ["docker:dind"]
+    dependencies: []
+    tags: ["dind"]
+    script:
+      - "docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN -e docker@johnnei.org $CI_REGISTRY"
+      - "mvn -B verify -Dit.sonar.version=$SONAR_VERSION -Dit.gitlab.version=$GITLAB_VERSION"
+
+# Test compatibility with SonarQube Versions
+SonarQube-6.5:
+    <<: *it_template
+    variables:
+      SONAR_VERSION: "6.5"
+      GITLAB_VERSION: "9.3.10-ce.0"
+
+SonarQube-6.4:
+    <<: *it_template
+    variables:
+      SONAR_VERSION: "6.4"
+      GITLAB_VERSION: "9.3.10-ce.0"
+
+SonarQube-6.3:
+    <<: *it_template
+    variables:
+      SONAR_VERSION: "6.3"
+      GITLAB_VERSION: "9.3.10-ce.0"
+
+SonarQube-6.2:
+    <<: *it_template
+    variables:
+      SONAR_VERSION: "6.2"
+      GITLAB_VERSION: "9.3.10-ce.0"
+
+SonarQube-6.1:
+    <<: *it_template
+    variables:
+      SONAR_VERSION: "6.1"
+      GITLAB_VERSION: "9.3.10-ce.0"
+
+SonarQube-6.0:
+    <<: *it_template
+    variables:
+      SONAR_VERSION: "6.0"
+      GITLAB_VERSION: "9.3.10-ce.0"
+
+# Test compatibility with GitLab versions
+GitLab-9.3:
+    <<: *it_template
+    variables:
+      SONAR_VERSION: "lts"
+      GITLAB_VERSION: "9.3.10-ce.0"
+
+GitLab-9.4:
+    <<: *it_template
+    variables:
+      SONAR_VERSION: "lts"
+      GITLAB_VERSION: "9.4.5-ce.0"
+
+GitLab-9.5:
+    <<: *it_template
+    variables:
+      SONAR_VERSION: "lts"
+      GITLAB_VERSION: "9.5.2-ce.0"
