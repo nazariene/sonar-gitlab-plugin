@@ -71,6 +71,7 @@ public class CommitIssueJob implements PostJob {
 	public void execute(@Nonnull PostJobContext context) {
 		if (!configuration.isInlineCommitEnabled() && !configuration.isSummarizeCommitEnabled()) {
 			LOGGER.info("Inline and summary of commits is disabled, skipping");
+			return;
 		}
 
 		CommitCommenter commitCommenter = createCommenter();

@@ -40,7 +40,7 @@ public interface GitLabApi {
 
 	@GET
 	@Path("/projects")
-	Collection<GitLabProject> getProjects();
+	Collection<GitLabProject> getProjects(@DefaultValue("true") @QueryParam("starred") String starred);
 
 	@GET
 	@Path("/projects/{id}/repository/commits/{sha}/comments")

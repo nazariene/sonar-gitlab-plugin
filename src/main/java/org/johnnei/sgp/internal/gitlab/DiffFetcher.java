@@ -38,6 +38,8 @@ public class DiffFetcher {
 		GitLabCommitComparison compare;
 
 		try {
+			LOGGER.info("Fetching diff for project " + configuration.getProject().getName() + " (id: " + configuration.getProject().getId() + ")");
+			LOGGER.info("Commit hash: " + configuration.getCommitHash() + ", base branch: " + configuration.getBaseBranch());
 			compare = gitlabAPI.compareCommits(configuration.getProject().getId(), configuration.getBaseBranch(), configuration.getCommitHash());
 		} catch (IOException e) {
 			throw new IllegalStateException("Failed to fetch compare diff.", e);

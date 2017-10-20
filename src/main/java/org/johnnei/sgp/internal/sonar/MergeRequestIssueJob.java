@@ -1,6 +1,5 @@
 package org.johnnei.sgp.internal.sonar;
 
-import org.johnnei.sgp.internal.gitlab.CommitCommenter;
 import org.johnnei.sgp.internal.gitlab.DiffFetcher;
 import org.johnnei.sgp.internal.gitlab.MergeRequestCommenter;
 import org.johnnei.sgp.internal.gitlab.PipelineBreaker;
@@ -8,8 +7,8 @@ import org.johnnei.sgp.internal.model.MappedIssue;
 import org.johnnei.sgp.internal.model.SonarReport;
 import org.johnnei.sgp.internal.model.diff.UnifiedDiff;
 import org.johnnei.sgp.internal.util.Stopwatch;
-import org.sonar.api.batch.BatchSide;
 import org.sonar.api.batch.InstantiationStrategy;
+import org.sonar.api.batch.ScannerSide;
 import org.sonar.api.batch.fs.InputComponent;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.postjob.PostJob;
@@ -21,7 +20,6 @@ import org.sonar.api.utils.log.Loggers;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -33,7 +31,7 @@ import java.util.stream.StreamSupport;
 
 import static org.sonar.api.batch.InstantiationStrategy.PER_BATCH;
 
-@BatchSide
+@ScannerSide
 @InstantiationStrategy(PER_BATCH)
 public class MergeRequestIssueJob implements PostJob {
 
@@ -55,11 +53,15 @@ public class MergeRequestIssueJob implements PostJob {
 
     @Override
     public void describe(@Nonnull PostJobDescriptor postJobDescriptor) {
-        postJobDescriptor.name("Test Stuff");
+        postJobDescriptor.name("Comment Merge Request");
     }
 
     @Override
     public void execute(PostJobContext context) {
+        if (!configuration.isSummarizeMergeRequestEnabled()) {
+            LOGGER.info("Summarizing merge request is disabled, skipping");
+            return;
+        }
         LOGGER.info("Executing Merge Request Issue job");
 
         SonarReport report = getSonarReport(context);

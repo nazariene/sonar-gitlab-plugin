@@ -169,7 +169,7 @@ public class GitLabSupport {
 
 		String projectName = String.format("sgp-it-%s-%s", clazz.getSimpleName(), testName.getMethodName());
 
-		List<String> projects = rootUser.getProjects().stream()
+		List<String> projects = rootUser.getProjects("true").stream()
 			.map(GitLabProject::getName)
 			.collect(Collectors.toList());
 		assertThat("Project with that name already exists. Duplicate test name.", projects, not(hasItem(equalTo(projectName))));

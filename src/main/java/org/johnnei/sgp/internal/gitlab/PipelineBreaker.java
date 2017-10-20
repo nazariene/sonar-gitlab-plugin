@@ -29,18 +29,27 @@ public class PipelineBreaker {
 			return;
 		}
 
-		GitLabApi gitlabAPI = configuration.createGitLabConnection();
-
-		String status;
-		String message;
-
-		if (hasCriticalOrWorseIssue(report)) {
-			status = "failed";
-			message = "A critical or worse issue has been found.";
-		} else {
-			status = "success";
-			message = "No critical (or worse) issues found.";
+		String message = "";
+		String status = getSuccessStatus();
+		long issueCount = 0;
+		if (configuration.maxBlockerIssues() >= 0 && (issueCount = countIssuesWithSeverity(report, Severity.BLOCKER)) > configuration.maxBlockerIssues()) {
+			message = "Found " + issueCount + " blocker issues out of " + configuration.maxBlockerIssues() + " allowed!";
+			status = getFailedStatus();
 		}
+		else if (configuration.maxCriticalIssues() >= 0 && (issueCount = countIssuesWithSeverity(report, Severity.CRITICAL)) > configuration.maxCriticalIssues()) {
+			message = "Found " + issueCount + " critical issues out of " + configuration.maxCriticalIssues() + " allowed!";
+			status = getFailedStatus();
+		}
+		else if (configuration.maxMajorIssues() >= 0 && (issueCount = countIssuesWithSeverity(report, Severity.MAJOR)) > configuration.maxMajorIssues()) {
+			message = "Found " + issueCount + " major issues out of " + configuration.maxMajorIssues() + " allowed!";
+			status = getFailedStatus();
+		}
+		else if (configuration.maxMinorIssues() >= 0 && (issueCount = countIssuesWithSeverity(report, Severity.MINOR)) > configuration.maxMinorIssues()) {
+			message = "Found " + issueCount + " minor issues out of " + configuration.maxMinorIssues() + " allowed!";
+			status = getFailedStatus();
+		}
+
+		GitLabApi gitlabAPI = configuration.createGitLabConnection();
 
 		try {
 			gitlabAPI.createCommitStatus(configuration.getProject().getId(), report.getBuildCommitSha(), status, "SonarQube", message);
@@ -49,10 +58,18 @@ public class PipelineBreaker {
 		}
 	}
 
-	private boolean hasCriticalOrWorseIssue(SonarReport report) {
+	private long countIssuesWithSeverity(SonarReport report, Severity targetSeverity) {
 		return report.getIssues()
-			.map(MappedIssue::getIssue)
-			.map(PostJobIssue::severity)
-			.anyMatch(severity -> severity == Severity.CRITICAL || severity == Severity.BLOCKER);
+				.map(MappedIssue::getIssue)
+				.map(PostJobIssue::severity).filter(severity -> severity.equals(targetSeverity))
+				.count();
+	}
+
+	private String getFailedStatus() {
+		return "failed";
+	}
+
+	private String getSuccessStatus() {
+		return "success";
 	}
 }

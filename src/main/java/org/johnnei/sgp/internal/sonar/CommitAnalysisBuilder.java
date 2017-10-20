@@ -15,13 +15,10 @@ public class CommitAnalysisBuilder extends ProjectBuilder {
 
 	private static final Logger LOGGER = Loggers.get(CommitAnalysisBuilder.class);
 
-	private final AnalysisMode analysisMode;
-
 	private final GitLabPluginConfiguration configuration;
 
 	public CommitAnalysisBuilder(GitLabPluginConfiguration configuration, AnalysisMode analysisMode) {
 		this.configuration = configuration;
-		this.analysisMode = analysisMode;
 	}
 
 	@Override
@@ -35,22 +32,10 @@ public class CommitAnalysisBuilder extends ProjectBuilder {
 	}
 
 	private void ensureCorrectConfiguration() {
-		ensureIssuesMode();
 		try {
 			configuration.initialiseProject();
 		} catch (IOException e) {
 			throw new IllegalStateException("Failed to retrieve GitLab project.", e);
 		}
 	}
-
-	private void ensureIssuesMode() {
-		if (!analysisMode.isIssues()) {
-			throw new IllegalStateException(String.format("GitLab plugin requires \"%s\" to be set to either %s or %s.",
-					CoreProperties.ANALYSIS_MODE,
-					CoreProperties.ANALYSIS_MODE_ISSUES,
-					CoreProperties.ANALYSIS_MODE_PREVIEW
-			));
-		}
-	}
-
 }

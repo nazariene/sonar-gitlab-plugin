@@ -58,6 +58,38 @@ import org.johnnei.sgp.internal.sonar.GitLabPluginConfiguration;
                 project = true
         ),
         @Property(
+                key = GitLabPlugin.GITLAB_MAX_BLOCKER_ISSUES,
+                name = "Max blocker issues",
+                description = "Amount of max blocker issues allowed",
+                defaultValue = "0",
+                type = PropertyType.INTEGER,
+                project = true
+        ),
+        @Property(
+                key = GitLabPlugin.GITLAB_MAX_CRITICAL_ISSUES,
+                name = "Max critical issues",
+                description = "Amount of max critical issues allowed",
+                defaultValue = "0",
+                type = PropertyType.INTEGER,
+                project = true
+        ),
+        @Property(
+                key = GitLabPlugin.GITLAB_MAX_MAJOR_ISSUES,
+                name = "Max major issues",
+                description = "Amount of max major issues allowed",
+                defaultValue = "-1",
+                type = PropertyType.INTEGER,
+                project = true
+        ),
+        @Property(
+                key = GitLabPlugin.GITLAB_MAX_MINOR_ISSUES,
+                name = "Max minor issues",
+                description = "Amount of max minor issues allowed",
+                defaultValue = "-1",
+                type = PropertyType.INTEGER,
+                project = true
+        ),
+        @Property(
                 key = GitLabPlugin.GITLAB_COMMENT_MERGE_REQUEST,
                 name = "Summarize Merge Request",
                 description = "Add a summary comment to Merge Request",
@@ -90,6 +122,10 @@ public class GitLabPlugin implements Plugin {
     public static final String GITLAB_COMMIT_HASH = "sonar.gitlab.analyse.commit";
     public static final String GITLAB_BASE_BRANCH = "sonar.gitlab.analyse.base";
     public static final String GITLAB_BREAK_PIPELINE = "sonar.gitlab.pipeline.break";
+    public static final String GITLAB_MAX_BLOCKER_ISSUES = "sonar.gitlab.pipeline.max_blocker_issues";
+    public static final String GITLAB_MAX_CRITICAL_ISSUES = "sonar.gitlab.pipeline.max_critical_issues";
+    public static final String GITLAB_MAX_MAJOR_ISSUES = "sonar.gitlab.pipeline.max_major_issues";
+    public static final String GITLAB_MAX_MINOR_ISSUES = "sonar.gitlab.pipeline.max_minor_issues";
     public static final String GITLAB_COMMENT_MERGE_REQUEST = "sonar.gitlab.comment.mergerequest";
     public static final String GITLAB_COMMENT_COMMIT_INLINE = "sonar.gitlab.comment.commit.inline";
     public static final String GITLAB_COMMENT_COMMIT_SUMMARY = "sonar.gitlab.comment.commit.summary";

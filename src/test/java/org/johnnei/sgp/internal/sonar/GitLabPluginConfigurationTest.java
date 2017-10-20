@@ -103,7 +103,7 @@ public class GitLabPluginConfigurationTest {
 		when(projectMock.getNamespace()).thenReturn(namespaceMock);
 		when(namespaceMock.getName()).thenReturn("root");
 
-		when(apiMock.getProjects()).thenReturn(Collections.singletonList(projectMock));
+		when(apiMock.getProjects("true")).thenReturn(Collections.singletonList(projectMock));
 
 		cut.initialiseProject();
 

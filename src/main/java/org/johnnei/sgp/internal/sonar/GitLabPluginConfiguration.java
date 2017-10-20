@@ -85,7 +85,7 @@ public class GitLabPluginConfiguration {
 		Stopwatch stopwatch = new Stopwatch();
 		stopwatch.start("Looking up GitLab project.");
 		GitLabApi gitlabApi = createGitLabConnection();
-		project = gitlabApi.getProjects().stream()
+		project = gitlabApi.getProjects("true").stream()
 			.filter(p -> {
 				String name = String.format("%s/%s", p.getNamespace().getName(), p.getName());
 				LOGGER.debug("Filtering \"{}\" = \"{}\"", name, projectName);
@@ -113,6 +113,22 @@ public class GitLabPluginConfiguration {
 
 	public boolean isBreakPipelineEnabled() {
 		return settings.getBoolean(GitLabPlugin.GITLAB_BREAK_PIPELINE);
+	}
+
+	public int maxBlockerIssues() {
+		return settings.getInt(GitLabPlugin.GITLAB_MAX_BLOCKER_ISSUES);
+	}
+
+	public int maxCriticalIssues() {
+		return settings.getInt(GitLabPlugin.GITLAB_MAX_CRITICAL_ISSUES);
+	}
+
+	public int maxMajorIssues() {
+		return settings.getInt(GitLabPlugin.GITLAB_MAX_MAJOR_ISSUES);
+	}
+
+	public int maxMinorIssues() {
+		return settings.getInt(GitLabPlugin.GITLAB_MAX_MINOR_ISSUES);
 	}
 
 	public Boolean isSummarizeMergeRequestEnabled() {
