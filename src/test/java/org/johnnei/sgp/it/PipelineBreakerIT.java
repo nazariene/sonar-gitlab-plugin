@@ -3,6 +3,7 @@ package org.johnnei.sgp.it;
 import java.util.Map;
 
 import org.hamcrest.CoreMatchers;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import org.johnnei.sgp.internal.gitlab.api.v4.model.GitlabCommitStatus;
@@ -13,6 +14,7 @@ import org.johnnei.sgp.sonar.GitLabPlugin;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
+@Ignore
 public class PipelineBreakerIT extends IntegrationTest {
 
 	@Test
