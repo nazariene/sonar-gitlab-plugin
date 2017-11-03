@@ -29,7 +29,7 @@
     <it.gitlab.version>9.3.10-ce.0</it.gitlab.version>
 
     <!-- Dependency Versions -->
-    <dependency.sonar-plugin-api.version>6.5</dependency.sonar-plugin-api.version>
+    <dependency.sonar-plugin-api.version>6.4</dependency.sonar-plugin-api.version>
     <dependency.com.fasterxml.jackson.core.jackson.version>2.9.0</dependency.com.fasterxml.jackson.core.jackson.version>
     <dependency.org.jboss.resteasy.version>3.1.4.Final</dependency.org.jboss.resteasy.version>
   </properties>
