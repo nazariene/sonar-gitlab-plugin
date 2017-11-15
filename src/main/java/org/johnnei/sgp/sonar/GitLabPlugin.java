@@ -93,7 +93,7 @@ import org.johnnei.sgp.internal.sonar.GitLabPluginConfiguration;
                 key = GitLabPlugin.GITLAB_COMMENT_MERGE_REQUEST,
                 name = "Summarize Merge Request",
                 description = "Add a summary comment to Merge Request",
-                defaultValue = "true",
+                defaultValue = "false",
                 type = PropertyType.BOOLEAN,
                 project = true
         ),
