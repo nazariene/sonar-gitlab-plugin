@@ -3,6 +3,7 @@ package org.johnnei.sgp.internal.sonar;
 import org.johnnei.sgp.internal.gitlab.DiffFetcher;
 import org.johnnei.sgp.internal.gitlab.MergeRequestCommenter;
 import org.johnnei.sgp.internal.gitlab.PipelineBreaker;
+import org.johnnei.sgp.internal.gitlab.api.v4.model.MergeRequest;
 import org.johnnei.sgp.internal.model.MappedIssue;
 import org.johnnei.sgp.internal.model.SonarReport;
 import org.johnnei.sgp.internal.model.diff.UnifiedDiff;
@@ -66,8 +67,10 @@ public class MergeRequestIssueJob implements PostJob {
 
         SonarReport report = getSonarReport(context);
         MergeRequestCommenter mrCommenter = createCommenter();
-        mrCommenter.process(report);
-        pipelineBreaker.process(report);
+        MergeRequest mergeRequest = mrCommenter.process(report);
+        if (mergeRequest != null) {
+            pipelineBreaker.process(report);
+        }
     }
 
     private SonarReport getSonarReport(PostJobContext context) {

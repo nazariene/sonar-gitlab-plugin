@@ -23,18 +23,20 @@ public class MergeRequestCommenter {
     }
 
 
-    public void process(SonarReport sonarReport) {
+    public MergeRequest process(SonarReport sonarReport) {
         MergeRequest mergeRequest = findMergeRequest(sonarReport);
 
         if (mergeRequest == null) {
             LOGGER.warn("Could not found related merge-request for commit. " + sonarReport.getBuildCommitSha());
-            return;
+            return null;
         }
         LOGGER.info("Found corresponding Merge Request for commit " + sonarReport.getBuildCommitSha() + ", MR id: " + mergeRequest.getIid());
 
         updateDescription(mergeRequest, sonarReport);
 
-        gitlabApi.updateMergeRequest(sonarReport.getProject().getId(), mergeRequest.getIid(), mergeRequest);
+        mergeRequest = gitlabApi.updateMergeRequest(sonarReport.getProject().getId(), mergeRequest.getIid(), mergeRequest);
+
+        return mergeRequest;
     }
 
     private MergeRequest findMergeRequest(SonarReport sonarReport) {

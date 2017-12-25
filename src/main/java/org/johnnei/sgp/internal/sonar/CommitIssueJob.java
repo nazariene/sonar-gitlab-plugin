@@ -11,8 +11,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import org.sonar.api.batch.BatchSide;
 import org.sonar.api.batch.InstantiationStrategy;
+import org.sonar.api.batch.ScannerSide;
 import org.sonar.api.batch.fs.InputComponent;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.postjob.PostJob;
@@ -36,7 +36,7 @@ import static org.sonar.api.batch.InstantiationStrategy.PER_BATCH;
 /**
  * Post Job which creates comments in GitLab for the reported issues.
  */
-@BatchSide
+@ScannerSide
 @InstantiationStrategy(PER_BATCH)
 public class CommitIssueJob implements PostJob {
 
@@ -95,7 +95,7 @@ public class CommitIssueJob implements PostJob {
 
 		stopwatch.stop();
 
-		pipelineBreaker.process(report);
+		//pipelineBreaker.process(report);
 	}
 
 	/**
