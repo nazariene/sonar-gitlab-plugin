@@ -30,7 +30,7 @@
 
     <!-- Dependency Versions -->
     <dependency.sonar-plugin-api.version>6.4</dependency.sonar-plugin-api.version>
-    <dependency.com.fasterxml.jackson.core.jackson.version>2.9.10.1</dependency.com.fasterxml.jackson.core.jackson.version>
+    <dependency.com.fasterxml.jackson.core.jackson.version>2.10.3</dependency.com.fasterxml.jackson.core.jackson.version>
     <dependency.org.jboss.resteasy.version>3.1.4.Final</dependency.org.jboss.resteasy.version>
   </properties>
 
